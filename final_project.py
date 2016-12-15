@@ -28,8 +28,12 @@ time.sleep(8)
 word_count = {}
 #This line collects tweets from user 25073877 (realDonaldTrump) and will collect 500
 status_list = api.user_timeline(user_id = 25073877, count=500)
+
+#Go through all 500 tweets
 for i in status_list:
     tweet_text = i.text
+
+#strip all punctuation from the tweets
     for c in tweet_text:
         if c in string.punctuation:
             tweet_text = tweet_text.replace(c, '')
@@ -39,17 +43,22 @@ for i in status_list:
     good_list = []
     tweet_list = tweet_text.split()
 
+# strip all words that wont print to the text file by sorting good words into "good_list"
     for item in tweet_list:
         if all(ord(char) < 128 for char in item):
             good_list.append(item)
 
-    max_len = 0
+#count usage of each word in the list
     for w in good_list:
         w = w.lower()
+
+#discount the "words" that are links
         if 'http' in w:
             break
         elif ord(w[-1]) >= 128:
             break
+
+#count all of the remaining words
         if w in word_count:
             if len(w) > max_len:
                 max_len == len(w)
@@ -63,9 +72,12 @@ final_cnt = collections.OrderedDict(sorted(word_count.items(), key=operator.item
 save_file = open('results.txt','w')
 save_file.write('DONALD TRUMPS FAVORITE WORDS\n')
 
+#write all the words and their counts to a text file. discount words that were only used once
 for i in reversed(final_cnt):
     if final_cnt[i] > 1:
         save_file.write(i)
+
+# the number of "|"'s denotes the amount of times the word was used
         for z in range(final_cnt[i]):
             save_file.write('|')
         save_file.write('\n')
