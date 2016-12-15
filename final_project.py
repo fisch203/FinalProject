@@ -60,8 +60,6 @@ for i in status_list:
 
 #count all of the remaining words
         if w in word_count:
-            if len(w) > max_len:
-                max_len == len(w)
             word_count[w] += 1
         elif w not in word_count:
             word_count[w] = 1
