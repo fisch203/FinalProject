@@ -14,18 +14,19 @@ consumer_key = "5iwpZKk2DGpcLRT14hO3kuuwJ"
 consumer_secret = "JWPi0D4WHHf1ygycGj9MnaGzIFPlT9baULL0wyXidkwVs02Tzz"
 
 
-
-
-
-#This handles Twitter authetification and the connection to Twitter Streaming API
-# l = StdOutListener()
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-# stream = Stream(auth, l)
 api = tweepy.API(auth)
 
+print('This is my final project program.')
+print('The objective is to receive the last 500 tweets from our president elect from the twitter API.')
+print('The program will then count how many times each word is used (words only used once are not considered)')
+print('Then the program will print the results of the search into a text file (results.txt)')
+time.sleep(8)
+
+
 word_count = {}
-#This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
+#This line collects tweets from user 25073877 (realDonaldTrump) and will collect 500
 status_list = api.user_timeline(user_id = 25073877, count=500)
 for i in status_list:
     tweet_text = i.text
@@ -41,8 +42,8 @@ for i in status_list:
     for item in tweet_list:
         if all(ord(char) < 128 for char in item):
             good_list.append(item)
-    # print (tweet_text)
 
+    max_len = 0
     for w in good_list:
         w = w.lower()
         if 'http' in w:
@@ -50,6 +51,8 @@ for i in status_list:
         elif ord(w[-1]) >= 128:
             break
         if w in word_count:
+            if len(w) > max_len:
+                max_len == len(w)
             word_count[w] += 1
         elif w not in word_count:
             word_count[w] = 1
@@ -58,6 +61,8 @@ for i in status_list:
 final_cnt = collections.OrderedDict(sorted(word_count.items(), key=operator.itemgetter(1)))
 
 save_file = open('results.txt','w')
+save_file.write('DONALD TRUMPS FAVORITE WORDS\n')
+
 for i in reversed(final_cnt):
     if final_cnt[i] > 1:
         save_file.write(i)
